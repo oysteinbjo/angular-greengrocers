@@ -1,0 +1,8 @@
+<ul class="item-list store--item-list" *ngFor="let item of items | async">
+  <li>
+    <div class="store--item-icon">
+      <img [src]="'assets/icons/' + item.id + '.svg'" alt="beetroot" />
+    </div>
+    <button>Add to cart</button>
+  </li>
+</ul>
