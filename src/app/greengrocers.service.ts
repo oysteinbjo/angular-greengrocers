@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment.development';
-import { Item } from './models/item';
+import { CartItem, Item } from './models/item';
 
 
 @Injectable({
@@ -12,7 +12,7 @@ export class GreengrocersService {
   constructor() { }
   http = inject(HttpClient);
   items: Promise<Item[]> = Promise.resolve(this.getItems());
-  cart: Item[] = [];
+  cart: CartItem[] = [];
 
   private totalSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0)
   public total: Observable<number>= this.totalSubject.asObservable()
@@ -28,15 +28,37 @@ export class GreengrocersService {
     this.totalSubject.next(value)
   }
   addToCart(item: Item) {
-    this.cart.push(item)
+    const index = this.cart.findIndex((i) => i.id === item.id)
+    if(index === -1){
+      const newItem: CartItem = {
+        id:item.id,
+        name: item.name,
+        price: item.price,
+        amount:1,
+      }
+      this.cart.push(newItem)
+    }else {
+      this.cart[index].amount++;
+    }
+    console.log(this.cart)
     this.calculateTotal()
   }
 
   calculateTotal(): void{
     let newTotal: number = 0.0;
     this.cart.forEach((item) => {
-      newTotal += item.price
+      newTotal += item.price * item.amount
     })
     this.updateTotal(newTotal)
+  }
+
+  removeFromCart(item: Item):void{
+    const foundItem = this.cart.findIndex(i => i.id ===item.id)
+    if(this.cart[foundItem].amount === 1){
+      this.cart.splice(foundItem,1)
+    }else{
+      this.cart[foundItem].amount--
+    }
+    this.calculateTotal()
   }
 }
