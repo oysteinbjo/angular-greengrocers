@@ -5,7 +5,7 @@ import { Item } from 'src/app/models/item';
 @Component({
   selector: 'app-store',
   templateUrl: './store.component.html',
-  styleUrls: ['./store.component.css']
+  styleUrls: []
 })
 export class StoreComponent {
   constructor(private readonly greenGrocerService: GreengrocersService) { }
